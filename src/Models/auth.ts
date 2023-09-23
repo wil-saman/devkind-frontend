@@ -11,5 +11,4 @@ export interface IUser {
   username: string;
   userId: string;
   phoneNumber: string;
-  age: string;
 }

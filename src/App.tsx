@@ -1,6 +1,9 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import Login from "./Components/Content/Login/Login";
+import PrivateRoute from "./PrivateRoute";
+import Home from "./Components/Content/Home/Home";
+import Register from "./Components/Content/Register/Register";
 
 function App() {
   return (
@@ -15,24 +18,9 @@ function App() {
     >
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="*" element={<></>} />
         <Route path={"/"} element={<PrivateRoute component={Home} />} />
-        <Route path={"/Home"} element={<PrivateRoute component={Home} />} />
-        <Route path={"/Akun"} element={<PrivateRoute component={Akun} />} />
-        <Route path={"/Tabel"} element={<PrivateRoute component={Tabel} />} />
-        <Route path={"/Kirim"} element={<PrivateRoute component={Kirim} />} />
-        <Route
-          path={"/Form"}
-          element={<PrivateRoute component={KirimForm} />}
-        />
-        <Route
-          path={"/MyTabel"}
-          element={<PrivateRoute component={PersonalTabel} />}
-        />
-        <Route
-          path={"/AdminTabel"}
-          element={<AdminRoute component={KonfirmasiTabel} />}
-        />
       </Routes>
     </div>
   );
