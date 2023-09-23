@@ -1,16 +1,17 @@
 import { Button } from "@chakra-ui/react";
 import styled from "styled-components";
 
-export const StyledHomeRootContainer = styled.div`
+export const StyledSideDrawerRootContainer = styled.div`
   && {
     height: 100%;
-    width: 100%;
     display: flex;
+    position: absolute;
+    left: 0;
     flex-direction: row;
   }
 `;
 
-export const StyledHomeDrawerDiv = styled.div`
+export const StyledSideDrawerDrawerDiv = styled.div`
   && {
     height: 100%;
     width: 50px;
@@ -19,7 +20,7 @@ export const StyledHomeDrawerDiv = styled.div`
   }
 `;
 
-export const StyledHomeDrawerButton = styled(Button)`
+export const StyledSideDrawerDrawerButton = styled(Button)`
   && {
     height: 40px;
     width: 40px;

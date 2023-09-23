@@ -17,11 +17,13 @@ const useAuthProvider = create<IAuthProvider>()((set) => ({
   accessToken: localStorage.getItem("accessToken")
     ? localStorage.getItem("accessToken")
     : null,
-  isLoggedIn: false,
+  isLoggedIn: localStorage.getItem("accessToken") ? true : false,
   user: undefined,
-  setAccessToken: () => set((state) => ({ accessToken: state.accessToken })),
-  setIsLoggedIn: () => set((state) => ({ isLoggedIn: state.isLoggedIn })),
-  setUser: () => set((state) => ({ user: state.user })),
+  setAccessToken: (accessToken: string | null) =>
+    set((state) => ({ accessToken: accessToken })),
+  setIsLoggedIn: (loggedin: boolean) =>
+    set((state) => ({ isLoggedIn: loggedin })),
+  setUser: (user: IUser | undefined) => set((state) => ({ user: user })),
 }));
 
 export default useAuthProvider;

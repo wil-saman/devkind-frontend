@@ -7,6 +7,7 @@ import { IUser } from "../../Models/auth";
 
 let registerUrl = "http://" + baseAddress + "/register";
 let loginUrl = "http://" + baseAddress + "/login";
+let logout = "http://" + baseAddress + "/logout";
 
 interface IRegisterQuery {
   name: string;
@@ -60,9 +61,6 @@ interface loginQueryProps {
 const useLoginQuery = (onSuccessCb?: Function) => {
   const navigate = useNavigate();
 
-  const accessToken = useAuthProvider((state) => state.accessToken);
-  const user = useAuthProvider((state) => state.user);
-  const isLoggedIn = useAuthProvider((state) => state.isLoggedIn);
   const setAccessToken = useAuthProvider((state) => state.setAccessToken);
   const setUser = useAuthProvider((state) => state.setUser);
   const setIsLoggedIn = useAuthProvider((state) => state.setIsLoggedIn);
@@ -96,9 +94,47 @@ const useLoginQuery = (onSuccessCb?: Function) => {
         navigate("/");
       }, 1000);
 
-      console.log("accessToken and all", accessToken);
-      console.log("user", user);
-      console.log("iseLOggedin", isLoggedIn);
+      if (onSuccessCb) onSuccessCb();
+    },
+    onError: (error, variables, context) => {},
+  });
+
+  return mutation;
+};
+
+interface logoutQueryProps {
+  accessToken: string | null;
+}
+
+const useLogoutQuery = (onSuccessCb?: Function) => {
+  const navigate = useNavigate();
+
+  const setAccessToken = useAuthProvider((state) => state.setAccessToken);
+  const setUser = useAuthProvider((state) => state.setUser);
+  const setIsLoggedIn = useAuthProvider((state) => state.setIsLoggedIn);
+
+  const mutation = useMutation({
+    mutationFn: async ({ accessToken }: logoutQueryProps) => {
+      return axios.post(logout, {
+        headers: {
+          Authorization: "Bearer " + accessToken,
+          Accept: "application/json",
+        },
+      });
+    },
+    onSuccess: (result, variables, context) => {
+      console.log("RESULT:", result);
+      console.log("variables", variables);
+      console.log("CONTEXT", context);
+
+      setTimeout(() => {
+        localStorage.removeItem("accessToken");
+
+        setIsLoggedIn(false);
+        setAccessToken(null);
+        setUser(undefined);
+        navigate("/");
+      }, 1000);
 
       if (onSuccessCb) onSuccessCb();
     },
@@ -111,6 +147,7 @@ const useLoginQuery = (onSuccessCb?: Function) => {
 const authAPI = {
   useRegisterQuery,
   useLoginQuery,
+  useLogoutQuery,
 };
 
 export default authAPI;
