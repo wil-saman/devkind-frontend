@@ -17,9 +17,12 @@ import {
   ModalHeader,
   ModalOverlay,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
+import authAPI from "../../../Services/API/authAPI";
+import useAuthProvider from "../../Provider/AuthProvider";
 
 type Props = {};
 
@@ -33,10 +36,50 @@ const Register = (props: Props) => {
     useState<boolean>(false);
   const [buttonClicked, setButtonClicked] = useState<boolean>(false);
 
+  const accessToken = useAuthProvider((state) => state.accessToken);
+
   const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: true });
 
   const navigate = useNavigate();
 
+  const toast = useToast();
+
+  //$$$$$$$$$$$$$ REGISTER NEW USER API $$$$$$$$$$$$$$$$$
+  const registerUser = authAPI.useRegisterQuery();
+
+  const runRegisterUser = () => {
+    if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)) {
+      return toast({
+        title: "Error!",
+        description: "Please check your email format",
+        status: "error",
+        duration: 1000,
+        isClosable: true,
+      });
+    } else {
+      const newUser = {
+        accessToken: accessToken,
+        queryProps: {
+          name: username,
+          email: email,
+          password: password,
+          password_confirmation: passwordConfirmation,
+        },
+      };
+      console.log("register is running", newUser);
+
+      toast.promise(registerUser.mutateAsync(newUser), {
+        success: {
+          title: "User Registered!",
+          description: "You have successfully registered your account.",
+        },
+        error: { title: "Error!", description: "Please try again." },
+        loading: { title: "Loading...", description: "Please wait" },
+      });
+    }
+  };
+
+  //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
   return (
     <StyledRegisterRootContainer>
       <Modal
@@ -75,6 +118,7 @@ const Register = (props: Props) => {
       <form
         onSubmit={(event) => {
           event.preventDefault();
+          runRegisterUser();
         }}
         style={{
           display: "flex",
@@ -84,12 +128,15 @@ const Register = (props: Props) => {
         }}
       >
         <RegisterTextInput
+          required
           name="username"
           value={username}
           onChange={(event) => setUsername(event.target.value)}
           placeholder="Insert username here"
         />
+
         <RegisterTextInput
+          required
           name="email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
@@ -97,6 +144,7 @@ const Register = (props: Props) => {
         />
         <InputGroup>
           <RegisterTextInput
+            required
             name="password"
             type={showPassword ? "text" : "password"}
             value={password}
@@ -116,6 +164,7 @@ const Register = (props: Props) => {
 
         <InputGroup>
           <RegisterTextInput
+            required
             name="password"
             type={showPasswordConfirmation ? "text" : "password"}
             value={passwordConfirmation}

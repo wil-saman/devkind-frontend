@@ -5,9 +5,16 @@ import {
   StyledLoginRootContainer,
   StyledLoginTitle,
 } from "./StyledLoginComponent";
-import { Button, InputGroup, InputRightElement } from "@chakra-ui/react";
+import {
+  Button,
+  InputGroup,
+  InputRightElement,
+  useToast,
+} from "@chakra-ui/react";
 import { ArrowForwardIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
+import authAPI from "../../../Services/API/authAPI";
+import useAuthProvider from "../../Provider/AuthProvider";
 
 interface ILoginProps {
   email: string;
@@ -31,12 +38,42 @@ const Login = (props: Props) => {
     setLoginForm((users) => ({ ...users, [e.target.name]: e.target.value }));
   };
 
+  const accessToken = useAuthProvider((state) => state.accessToken);
+
+  const toast = useToast();
+
+  //$$$$$$$$$$$$$ LOGIN  USER API $$$$$$$$$$$$$$$$$
+  const loginUser = authAPI.useLoginQuery();
+
+  const runLoginUser = () => {
+    const existingUser = {
+      accessToken: accessToken,
+      queryProps: {
+        email: loginForm.email,
+        password: loginForm.password,
+      },
+    };
+    console.log("login is running", existingUser);
+
+    toast.promise(loginUser.mutateAsync(existingUser), {
+      success: {
+        title: "You are logged in!",
+        description: "You have successfully login your account.",
+      },
+      error: { title: "Error!", description: "Please try again." },
+      loading: { title: "Loading...", description: "Please wait" },
+    });
+  };
+
+  //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
   return (
     <StyledLoginRootContainer>
       <StyledLoginTitle>Devkind Showcase</StyledLoginTitle>
       <form
         onSubmit={(event) => {
           event.preventDefault();
+          runLoginUser();
         }}
         style={{
           display: "flex",
@@ -46,6 +83,7 @@ const Login = (props: Props) => {
         }}
       >
         <LoginTextInput
+          required
           name="email"
           value={loginForm.email}
           onChange={handleUserFormChange}
@@ -72,7 +110,7 @@ const Login = (props: Props) => {
       </form>
       <LoginButton
         style={{ marginTop: "100px" }}
-        onClick={() => navigate("/home")}
+        onClick={() => navigate("/register")}
       >
         New User? Register Here!
       </LoginButton>
