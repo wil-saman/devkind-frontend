@@ -72,7 +72,7 @@ const Login = (props: Props) => {
       </form>
       <LoginButton
         style={{ marginTop: "100px" }}
-        onClick={() => navigate("/register")}
+        onClick={() => navigate("/home")}
       >
         New User? Register Here!
       </LoginButton>
