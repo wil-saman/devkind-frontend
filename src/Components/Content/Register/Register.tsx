@@ -100,7 +100,7 @@ const Register = (props: Props) => {
             <br />
             By clicking "Yes," you are confirming that you meet our age
             requirement and agree to our terms and conditions. If you are not 18
-            years old, please click "No" and exit the website.
+            years old, please click "Cancel" and exit the website.
           </ModalBody>
 
           <ModalFooter>

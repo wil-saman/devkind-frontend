@@ -8,6 +8,7 @@ import { IUser } from "../../Models/auth";
 let registerUrl = "http://" + baseAddress + "/register";
 let loginUrl = "http://" + baseAddress + "/login";
 let logout = "http://" + baseAddress + "/logout";
+let currentTokenUrl = "http://" + baseAddress + "/currentUser";
 
 interface IRegisterQuery {
   name: string;
@@ -115,12 +116,16 @@ const useLogoutQuery = (onSuccessCb?: Function) => {
 
   const mutation = useMutation({
     mutationFn: async ({ accessToken }: logoutQueryProps) => {
-      return axios.post(logout, {
-        headers: {
-          Authorization: "Bearer " + accessToken,
-          Accept: "application/json",
-        },
-      });
+      return axios.post(
+        logout,
+        {},
+        {
+          headers: {
+            Authorization: "Bearer " + accessToken,
+            Accept: "application/json",
+          },
+        }
+      );
     },
     onSuccess: (result, variables, context) => {
       console.log("RESULT:", result);
@@ -144,10 +149,62 @@ const useLogoutQuery = (onSuccessCb?: Function) => {
   return mutation;
 };
 
+interface currentTokenQueryProps {
+  accessToken: string | null;
+}
+
+const useCurrentTokenQuery = (onSuccessCb?: Function) => {
+  const navigate = useNavigate();
+
+  // const setAccessToken = useAuthProvider((state) => state.setAccessToken);
+  const setUser = useAuthProvider((state) => state.setUser);
+  const setIsLoggedIn = useAuthProvider((state) => state.setIsLoggedIn);
+
+  const mutation = useMutation({
+    mutationFn: async ({ accessToken }: currentTokenQueryProps) => {
+      return axios.post(
+        currentTokenUrl,
+        { currentToken: accessToken },
+        {
+          headers: {
+            Authorization: "Bearer " + accessToken,
+            Accept: "application/json",
+          },
+        }
+      );
+    },
+    onSuccess: (result, variables, context) => {
+      console.log("RESULT:", result);
+      console.log("variables", variables);
+      console.log("CONTEXT", context);
+
+      const loggedUser: IUser = {
+        name: result.data.name,
+        email: result.data.email,
+      };
+
+      setUser(loggedUser);
+      setIsLoggedIn(true);
+
+      if (onSuccessCb) onSuccessCb();
+    },
+    onError: (error, variables, context) => {
+      setUser(undefined);
+      setIsLoggedIn(false);
+      navigate("/");
+
+      if (onSuccessCb) onSuccessCb();
+    },
+  });
+
+  return mutation;
+};
+
 const authAPI = {
   useRegisterQuery,
   useLoginQuery,
   useLogoutQuery,
+  useCurrentTokenQuery,
 };
 
 export default authAPI;

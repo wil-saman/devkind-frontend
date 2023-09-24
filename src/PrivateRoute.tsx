@@ -9,13 +9,7 @@ type Props = {
 };
 
 const PrivateRoute: React.FC<Props> = ({ component: RouteComponent, path }) => {
-  const accessToken = useAuthProvider((state) => state.accessToken);
-  const user = useAuthProvider((state) => state.user);
   const isLoggedIn = useAuthProvider((state) => state.isLoggedIn);
-
-  console.log("is it logged in?", isLoggedIn);
-  console.log("user?", user);
-  console.log("accessToken?", accessToken);
   return isLoggedIn ? <RouteComponent /> : <Navigate to="/login" />;
 };
 
