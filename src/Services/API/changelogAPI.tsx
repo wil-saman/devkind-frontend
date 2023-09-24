@@ -5,18 +5,18 @@ import useAuthProvider from "../../Components/Provider/AuthProvider";
 
 const changelogUrl = "http://" + baseAddress + "/changelog";
 
-interface changelogQueryProps {
-  accessToken: string | null;
-}
-
 const useRetrieveChangelogQuery = (onSuccessCb?: Function) => {
   const accessToken = useAuthProvider((state) => state.accessToken);
+  const user = useAuthProvider((state) => state.user);
 
   const qKey = ["changelog"];
   const contactsQuery = useQuery(
     qKey,
     async () => {
       return axios.get(changelogUrl, {
+        params: {
+          userId: user?.userId,
+        },
         headers: {
           Authorization: "Bearer " + accessToken,
           Accept: "application/json",

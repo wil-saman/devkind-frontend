@@ -19,12 +19,12 @@ function App() {
 
   const toast = useToast();
 
-  const setloadingfunc = () => {
+  const setloadingfunction = () => {
     setIsLoading(false);
   };
 
   //$$$$$$$$$$$$$ CHECK CURRENT ACCESS TOKEN API $$$$$$$$$$$$$$$$$
-  const currentToken = authAPI.useCurrentTokenQuery(setloadingfunc);
+  const currentToken = authAPI.useCurrentTokenQuery(setloadingfunction);
 
   const runCurrentToken = () => {
     const currentTokenQuery = {

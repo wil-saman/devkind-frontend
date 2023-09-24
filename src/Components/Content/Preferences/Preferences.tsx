@@ -6,8 +6,15 @@ import {
   StyledPreferencesTitle,
 } from "./StyledPreferencesComponent";
 import { ChevronRightIcon } from "@chakra-ui/icons";
-import { Button, InputGroup, InputRightElement } from "@chakra-ui/react";
+import {
+  Button,
+  InputGroup,
+  InputRightElement,
+  useToast,
+} from "@chakra-ui/react";
 import useAuthProvider from "../../Provider/AuthProvider";
+import changelogAPI from "../../../Services/API/changelogAPI";
+import authAPI from "../../../Services/API/authAPI";
 
 type Props = {};
 
@@ -24,13 +31,90 @@ const Preferences = (props: Props) => {
   const [showNewpassconfirmation, setShownewpassconfirmation] =
     useState<boolean>(false);
 
+  const toast = useToast();
+
   const user = useAuthProvider((state) => state.user);
+
+  const accessToken = useAuthProvider((state) => state.accessToken);
+
+  //$$$$$$$$$$$$ POST UPDATE NAME API $$$$$$$$$$$$$$$$
+  const updateNameQuery = authAPI.useUpdateNameQuery();
+
+  const runUpdateName = () => {
+    const updateName = {
+      accessToken: accessToken,
+      queryProps: {
+        name: username,
+      },
+    };
+
+    toast.promise(updateNameQuery.mutateAsync(updateName), {
+      success: {
+        title: "Name updated!",
+        description: "You have successfully updated your account's name.",
+      },
+      error: { title: "Error!", description: "Please try again." },
+      loading: { title: "Loading...", description: "Please wait" },
+    });
+  };
+
+  //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+  //$$$$$$$$$$$$$ POST UPDATE EMAIL API $$$$$$$$$$$$$$$$$
+  const updateEmailQuery = authAPI.useUpdateEmailQuery();
+
+  const runUpdateEmail = () => {
+    const updateEmail = {
+      accessToken: accessToken,
+      queryProps: {
+        email: email,
+      },
+    };
+
+    toast.promise(updateEmailQuery.mutateAsync(updateEmail), {
+      success: {
+        title: "Email updated!",
+        description: "You have successfully updated your account's email.",
+      },
+      error: { title: "Error!", description: "Please try again." },
+      loading: { title: "Loading...", description: "Please wait" },
+    });
+  };
+
+  //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+  //$$$$$$$$$$$$ POST UPDATE PASSWORD API $$$$$$$$$$$$$$$$
+  const updatePasswordQuery = authAPI.useUpdatePasswordQuery();
+
+  const runUpdatePassword = () => {
+    const updatePassword = {
+      accessToken: accessToken,
+      queryProps: {
+        email: user?.email!,
+        old_password: oldpass,
+        new_password: newpass,
+        new_password_confirmation: newpassConfirmation,
+      },
+    };
+
+    toast.promise(updatePasswordQuery.mutateAsync(updatePassword), {
+      success: {
+        title: "Password updated!",
+        description: "You have successfully updated your account's password.",
+      },
+      error: { title: "Error!", description: "Please try again." },
+      loading: { title: "Loading...", description: "Please wait" },
+    });
+  };
+
+  //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
   return (
     <StyledPreferencesRootContainer>
       <form
         onSubmit={(event) => {
           event.preventDefault();
+          runUpdateName();
         }}
         style={{
           display: "flex",
@@ -55,6 +139,7 @@ const Preferences = (props: Props) => {
       <form
         onSubmit={(event) => {
           event.preventDefault();
+          runUpdateEmail();
         }}
         style={{
           display: "flex",
@@ -79,6 +164,7 @@ const Preferences = (props: Props) => {
       <form
         onSubmit={(event) => {
           event.preventDefault();
+          runUpdatePassword();
         }}
         style={{
           display: "flex",

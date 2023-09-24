@@ -9,7 +9,9 @@ let registerUrl = "http://" + baseAddress + "/register";
 let loginUrl = "http://" + baseAddress + "/login";
 let logout = "http://" + baseAddress + "/logout";
 let currentTokenUrl = "http://" + baseAddress + "/currentUser";
-
+let updatePasswordUrl = "http://" + baseAddress + "/updatePassword";
+let updateEmailUrl = "http://" + baseAddress + "/updateEmail";
+let updateNameUrl = "http://" + baseAddress + "/updateName";
 interface IRegisterQuery {
   name: string;
   email: string;
@@ -85,6 +87,7 @@ const useLoginQuery = (onSuccessCb?: Function) => {
         const loggedUser: IUser = {
           name: result.data.user.name,
           email: result.data.user.email,
+          userId: result.data.user.id,
         };
 
         localStorage.setItem("accessToken", freshAccessToken);
@@ -181,6 +184,7 @@ const useCurrentTokenQuery = (onSuccessCb?: Function) => {
       const loggedUser: IUser = {
         name: result.data.name,
         email: result.data.email,
+        userId: result.data.id,
       };
 
       setUser(loggedUser);
@@ -200,11 +204,141 @@ const useCurrentTokenQuery = (onSuccessCb?: Function) => {
   return mutation;
 };
 
+interface IUpdatePasswordQuery {
+  email: string;
+  old_password: string;
+  new_password: string;
+  new_password_confirmation: string;
+}
+
+interface updatePasswordQueryProps {
+  accessToken: string | null;
+  queryProps: IUpdatePasswordQuery;
+}
+
+const useUpdatePasswordQuery = (onSuccessCb?: Function) => {
+  // const navigate = useNavigate();
+  // const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async ({
+      accessToken,
+      queryProps,
+    }: updatePasswordQueryProps) => {
+      return axios.post(updatePasswordUrl, queryProps, {
+        headers: {
+          Authorization: "Bearer " + accessToken,
+          Accept: "application/json",
+        },
+      });
+    },
+    onSuccess: (result, variables, context) => {
+      console.log("RESULT:", result);
+      console.log("variables", variables);
+      console.log("CONTEXT", context);
+
+      if (onSuccessCb) onSuccessCb();
+    },
+    onError: (error, variables, context) => {},
+  });
+
+  return mutation;
+};
+
+interface IUpdateEmailQuery {
+  email: string;
+}
+
+interface updateEmailQueryProps {
+  accessToken: string | null;
+  queryProps: IUpdateEmailQuery;
+}
+
+const useUpdateEmailQuery = (onSuccessCb?: Function) => {
+  const user = useAuthProvider((state) => state.user);
+  const setUser = useAuthProvider((state) => state.setUser);
+
+  const mutation = useMutation({
+    mutationFn: async ({ accessToken, queryProps }: updateEmailQueryProps) => {
+      return axios.post(updateEmailUrl, queryProps, {
+        headers: {
+          Authorization: "Bearer " + accessToken,
+          Accept: "application/json",
+        },
+      });
+    },
+    onSuccess: (result, variables, context) => {
+      console.log("RESULT:", result);
+      console.log("variables", variables);
+      console.log("CONTEXT", context);
+
+      const updatedUser: IUser = {
+        userId: user?.userId,
+        email: variables.queryProps.email,
+        name: user!.name,
+      };
+
+      setUser(updatedUser);
+
+      if (onSuccessCb) onSuccessCb();
+    },
+    onError: (error, variables, context) => {},
+  });
+
+  return mutation;
+};
+
+interface IUpdateNameQuery {
+  name: string;
+}
+
+interface updateNameQueryProps {
+  accessToken: string | null;
+  queryProps: IUpdateNameQuery;
+}
+
+const useUpdateNameQuery = (onSuccessCb?: Function) => {
+  const user = useAuthProvider((state) => state.user);
+  const setUser = useAuthProvider((state) => state.setUser);
+
+  const mutation = useMutation({
+    mutationFn: async ({ accessToken, queryProps }: updateNameQueryProps) => {
+      return axios.post(updateNameUrl, queryProps, {
+        headers: {
+          Authorization: "Bearer " + accessToken,
+          Accept: "application/json",
+        },
+      });
+    },
+    onSuccess: (result, variables, context) => {
+      console.log("RESULT:", result);
+      console.log("variables", variables);
+      console.log("CONTEXT", context);
+
+      const updatedUser: IUser = {
+        userId: user?.userId,
+        email: user!.email,
+        name: variables.queryProps.name,
+      };
+
+      setUser(updatedUser);
+
+      if (onSuccessCb) onSuccessCb();
+    },
+    onError: (error, variables, context) => {},
+  });
+
+  return mutation;
+};
+
 const authAPI = {
   useRegisterQuery,
   useLoginQuery,
   useLogoutQuery,
   useCurrentTokenQuery,
+  useUpdatePasswordQuery,
+  useUpdateEmailQuery,
+  useUpdateNameQuery,
 };
 
 export default authAPI;

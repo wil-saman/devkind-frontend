@@ -4,10 +4,22 @@ import {
   StyledAboutTitle,
 } from "./StyledAboutComponent";
 import { TableVirtuoso } from "react-virtuoso";
+import changelogAPI from "../../../Services/API/changelogAPI";
+import { IChangelog } from "../../../Models/changelog";
 
 type Props = {};
 
 const About = (props: Props) => {
+  //$$$$$$$$$$$$$ GET CHANGELOG DATA API $$$$$$$$$$$$$$$$$
+  const changelogQuery = changelogAPI.useRetrieveChangelogQuery();
+
+  const changelogQueryData = changelogQuery
+    ? (changelogQuery.data?.data as IChangelog[])
+    : [];
+
+  console.log("THIS IS CHANGELOG", changelogQueryData);
+
+  //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
   return (
     <StyledAboutRootContainer>
       <StyledAboutTitle>
@@ -20,10 +32,12 @@ const About = (props: Props) => {
       <TableVirtuoso
         style={{
           display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
           height: "80%",
           width: "50%",
         }}
-        data={[1, 2, 3, 4, 5, 6]}
+        data={changelogQueryData}
         fixedHeaderContent={() => (
           <tr>
             <th style={{ padding: "10px" }}>Changed Information</th>
@@ -31,18 +45,12 @@ const About = (props: Props) => {
             <th style={{ padding: "10px" }}>New Value</th>
           </tr>
         )}
-        itemContent={(index, user) => (
-          <div>
-            <div
-              style={{
-                padding: "10px",
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              {user}
-            </div>
-          </div>
+        itemContent={(index, cl) => (
+          <>
+            <td style={{ width: 150 }}>{cl.changedItem}</td>
+            <td>{cl.oldValue}</td>
+            <td>{cl.newValue}</td>
+          </>
         )}
       />
     </StyledAboutRootContainer>
