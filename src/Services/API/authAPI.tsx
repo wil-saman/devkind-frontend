@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import useAuthProvider from "../../Components/Provider/AuthProvider";
 import { IUser } from "../../Models/auth";
+import { IChangelog } from "../../Models/changelog";
 
 let registerUrl = "http://" + baseAddress + "/register";
 let loginUrl = "http://" + baseAddress + "/login";
@@ -218,7 +219,7 @@ interface updatePasswordQueryProps {
 
 const useUpdatePasswordQuery = (onSuccessCb?: Function) => {
   // const navigate = useNavigate();
-  // const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: async ({
@@ -236,6 +237,15 @@ const useUpdatePasswordQuery = (onSuccessCb?: Function) => {
       console.log("RESULT:", result);
       console.log("variables", variables);
       console.log("CONTEXT", context);
+
+      queryClient.setQueryData(["changelog"], (oldData: any) =>
+        oldData
+          ? {
+              ...oldData,
+              data: [...oldData.data, result.data],
+            }
+          : oldData
+      );
 
       if (onSuccessCb) onSuccessCb();
     },
@@ -255,6 +265,8 @@ interface updateEmailQueryProps {
 }
 
 const useUpdateEmailQuery = (onSuccessCb?: Function) => {
+  const queryClient = useQueryClient();
+
   const user = useAuthProvider((state) => state.user);
   const setUser = useAuthProvider((state) => state.setUser);
 
@@ -280,6 +292,15 @@ const useUpdateEmailQuery = (onSuccessCb?: Function) => {
 
       setUser(updatedUser);
 
+      queryClient.setQueryData(["changelog"], (oldData: any) =>
+        oldData
+          ? {
+              ...oldData,
+              data: [...oldData.data, result.data],
+            }
+          : oldData
+      );
+
       if (onSuccessCb) onSuccessCb();
     },
     onError: (error, variables, context) => {},
@@ -298,6 +319,8 @@ interface updateNameQueryProps {
 }
 
 const useUpdateNameQuery = (onSuccessCb?: Function) => {
+  const queryClient = useQueryClient();
+
   const user = useAuthProvider((state) => state.user);
   const setUser = useAuthProvider((state) => state.setUser);
 
@@ -322,6 +345,15 @@ const useUpdateNameQuery = (onSuccessCb?: Function) => {
       };
 
       setUser(updatedUser);
+
+      queryClient.setQueryData(["changelog"], (oldData: any) =>
+        oldData
+          ? {
+              ...oldData,
+              data: [...oldData.data, result.data],
+            }
+          : oldData
+      );
 
       if (onSuccessCb) onSuccessCb();
     },
