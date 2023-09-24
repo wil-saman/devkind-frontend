@@ -5,6 +5,12 @@ This project aims to create an authentication system that allows users to regist
 ## Tech Stack
 
 React.JS & TypeScript
+Chakra UI
+Zustand
+React router dom
+Styled component
+React virtuoso
+
 
 ## Requirements
 
@@ -20,7 +26,12 @@ React.JS & TypeScript
 
 ## Things that have been done in the project
 
-- ...
-- ...
-- ...
+- Created basic ReactJS and TypeScript template - 20 min
+- Installed necessary dependencies - 10 min
+- Created Login and Register page - 1 hour
+- Created About (Home) page and added drawer - 1 min
+- Login and Register API - 1 min
+- Login and Register API calls are functional. Access Token is used to check session. - 4 hours
+- update Email, Name, and Password - 4 hours
+
 
