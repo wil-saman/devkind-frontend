@@ -2,12 +2,15 @@ import axios from "axios";
 import { baseAddress } from "../settings";
 import { useQuery } from "@tanstack/react-query";
 import useAuthProvider from "../../Components/Provider/AuthProvider";
+import { useLocation } from "react-router-dom";
 
 const changelogUrl = "http://" + baseAddress + "/changelog";
 
 const useRetrieveChangelogQuery = (onSuccessCb?: Function) => {
   const accessToken = useAuthProvider((state) => state.accessToken);
   const user = useAuthProvider((state) => state.user);
+
+  const location = useLocation();
 
   const qKey = ["changelog"];
   const contactsQuery = useQuery(
@@ -27,15 +30,11 @@ const useRetrieveChangelogQuery = (onSuccessCb?: Function) => {
       onSuccess: () => {},
 
       onError: () => {},
-      //   enabled: Boolean(
-      //     retrieveContactsQuery.accessToken &&
-      //       retrieveContactsQuery.companyId &&
-      //       retrieveContactsQuery.contactPageDisplay === "Contact"
-      //   ),
+      enabled: Boolean(
+        location.pathname === "/" || location.pathname === "/About"
+      ),
       retry: true,
-
       staleTime: Infinity,
-      // refetchOnReconnect: true,
     }
   );
   return contactsQuery;

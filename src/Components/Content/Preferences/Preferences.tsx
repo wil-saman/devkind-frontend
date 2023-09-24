@@ -19,6 +19,7 @@ import authAPI from "../../../Services/API/authAPI";
 type Props = {};
 
 const Preferences = (props: Props) => {
+  // States for text input
   const [username, setUsername] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [oldpass, setOldpass] = useState<string>("");

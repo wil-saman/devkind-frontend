@@ -13,6 +13,7 @@ const About = (props: Props) => {
   //$$$$$$$$$$$$$ GET CHANGELOG DATA API $$$$$$$$$$$$$$$$$
   const changelogQuery = changelogAPI.useRetrieveChangelogQuery();
 
+  // Changelog data for table
   const changelogQueryData = changelogQuery
     ? (changelogQuery.data?.data as IChangelog[])
     : [];

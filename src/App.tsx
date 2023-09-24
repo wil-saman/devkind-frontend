@@ -8,7 +8,7 @@ import SideDrawer from "./Components/Content/SideDrawer/SideDrawer";
 import About from "./Components/Content/About/About";
 import Preferences from "./Components/Content/Preferences/Preferences";
 import authAPI from "./Services/API/authAPI";
-import { Spinner, useToast } from "@chakra-ui/react";
+import { Spinner } from "@chakra-ui/react";
 
 function App() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -16,8 +16,6 @@ function App() {
   const accessToken = useAuthProvider((state) => state.accessToken);
   const setUser = useAuthProvider((state) => state.setUser);
   const isLoggedIn = useAuthProvider((state) => state.isLoggedIn);
-
-  const toast = useToast();
 
   const setloadingfunction = () => {
     setIsLoading(false);
@@ -37,6 +35,7 @@ function App() {
   //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
   useEffect(() => {
+    // Check if the current access token is still available or not.
     runCurrentToken();
   }, []);
 

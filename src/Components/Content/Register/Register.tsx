@@ -27,6 +27,7 @@ import useAuthProvider from "../../Provider/AuthProvider";
 type Props = {};
 
 const Register = (props: Props) => {
+  // States for text input
   const [username, setUsername] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -38,7 +39,7 @@ const Register = (props: Props) => {
 
   const accessToken = useAuthProvider((state) => state.accessToken);
 
-  const { isOpen, onOpen, onClose } = useDisclosure({ defaultIsOpen: true });
+  const { isOpen, onClose } = useDisclosure({ defaultIsOpen: true });
 
   const navigate = useNavigate();
 
